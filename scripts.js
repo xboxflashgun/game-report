@@ -18,8 +18,6 @@ function report()	{
 	.then(res => res.json())
 	.then(res => {
 
-		console.log(res);
-
 		Object.keys(res[0][0]).forEach( k => d3.select("#"+k).text(res[0][0][k]));
 		d3.select("#timesince").text( (new Date( +res[1][0] * 1000)).toLocaleDateString());
 

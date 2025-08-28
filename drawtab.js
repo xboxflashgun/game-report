@@ -13,7 +13,6 @@ function drawtab(table)	{
 	var url = `api/getcsv.php?f=gettab&tab=${table}&titleid=${titleid}`;
 	Object.keys(graphs).forEach( t => url += `&${graphs[t].fld}=${graphs[t].id}` );
 
-	console.log(url);
 	fetch(url)
 	.then( res => res.text() )
 	.then( res => {
@@ -27,6 +26,7 @@ function drawtab(table)	{
 				return;
 
 			var row = s.split('\t');
+			row[1] = +row[1];
 			row[2] = +row[2];
 			if(row[0] === '\\N')	{
 
@@ -40,8 +40,6 @@ function drawtab(table)	{
 			tab.push(row);
 
 		});
-
-		console.log(tab);
 
 		function filltab()	{
 
@@ -89,14 +87,34 @@ function drawtab(table)	{
 
 			d3.select(`#${table}`).selectAll('input[type="radio"]').on('change', e => {
 
-				graphs[table].id = +e.target.value;
+				var id = +e.target.value;
+				graphs[table].id = id;
 
 				Object.keys(graphs).forEach( t => {
 					if(t !== table)
 						drawtab(t);
 				});
+				paint();
 
 			});
+
+			paint();
+
+		}
+
+		const grad = (a,b) => (a === b) ? 'white' : (a > b) ? '#0f0' : '#f00';
+
+		function paint()	{
+
+			var id = +d3.select(`#${table} input[type="radio"]:checked`).property("value");
+			console.log(table, id);
+
+			var sel = tab.find( d => d[1] === id );
+			var [ avgh, avgd ] = [ sel[3], sel[4] ];
+			console.log(avgh, avgd);
+
+			d3.selectAll(`#${table} td:nth-child(5)`).style('color', v => grad(v[3], avgh));
+			d3.selectAll(`#${table} td:nth-child(6)`).style('color', v => grad(v[4], avgd));
 
 		}
 
