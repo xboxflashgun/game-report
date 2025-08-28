@@ -1,0 +1,50 @@
+body {
+    font-family: "Manrope", sans-serif;
+    font-size: 14px;
+    width: 1200px;
+    margin: auto;
+    color: #ddd;
+    background-color: #2b4021;
+}
+
+@font-face	{
+	font-family: "SegoeXboxMDL2Assets";
+	src: 	url("/fonts/SegXbox2.ttf") format("truetype");
+}
+
+.xbox   {
+	padding-left: 10px;
+	font-family: "SegoeXboxMDL2Assets";
+}
+
+p {
+	line-height: 1.5;
+}
+
+.scrollable {
+	overflow: auto;
+	max-height: 200px;
+	display: block;
+	width: 100%;
+	margin-right: auto;
+	background-color: #dddddd;
+	margin: 0px;
+	padding: 0px;
+}
+
+.popup {
+	position: absolute;
+	background-color: rgba(64, 32, 64, 0.8);
+	color: #eee;
+	padding: 10px;
+	border: 1px solid #999;
+	border-radius: 5px;
+}
+
+footer  {
+    padding-top: 40px;
+	padding-bottom: 5px;
+	text-align: end;
+	font-size: 90%;
+}
+
