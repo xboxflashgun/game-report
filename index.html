@@ -8,8 +8,69 @@
 	<link rel="stylesheet" type="text/css" href="main.css">
 	<script src="/d3.v7.min.js"></script>
 	<script src="scripts.js"></script>
+	<script src="drawtab.js"></script>
+	<script src="games.js"></script>
 </head>
 <body onload="main()">
+
+	<h2>Game report</h2>
+	<input type="text" placeholder="Find game by name" name="game" id="game" size="80" /><div class="menu" id="gameslist">
+		<table><tbody id="gamestab">
+		</tbody></table>
+	</div>
+
+	<h2 id="name"></h2>
+	<table id="overall">
+		<tbody>
+		<tr><th>Statistics available since</th><th id="timesince"></th></tr>
+		<tr><th>Total gamers</th><th id="players"></th></tr>
+		</tbody>
+	</table>
+
+	<h3>Devices</h3>
+
+	<table class="scrollable">
+		<thead><tr>
+			<th>Device</th>
+			<th>Gamers</th>
+			<th></th>
+			<th>Percentage</th>
+			<th>Avg. hours</th>
+			<th>Avg. days</th>
+		</tr></thead>
+		<tbody id="devices" class="stdtab"></tbody>
+	</table>
+
+	<h3>Countries</h3>
+
+	<input type="text" size="40" placeholder="Filter country names..." id="filter-countries" />
+	<table class="scrollable">
+		<thead><tr>
+			<th>Device</th>
+			<th>Gamers</th>
+			<th></th>
+			<th>Percentage</th>
+			<th>Avg. hours</th>
+			<th>Avg. days</th>
+		</tr></thead>
+		<tbody id="countries" class="stdtab"></tbody>
+	</table>
+
+	<h3>Languages</h3>
+
+	<input type="text" size="40" placeholder="Filter language names..." id="filter-langs" />
+	<table class="scrollable">
+		<thead><tr>
+			<th>Device</th>
+			<th>Gamers</th>
+			<th></th>
+			<th>Percentage</th>
+			<th>Avg. hours</th>
+			<th>Avg. days</th>
+		</tr></thead>
+		<tbody id="langs" class="stdtab"></tbody>
+	</table>
+
 
 	<footer>Contact: <a href="mailto:flashgun@xboxstat.com?subject=xboxstat.com">flashgun@xboxstat.com</a></footer>
 	

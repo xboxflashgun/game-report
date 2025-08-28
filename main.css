@@ -1,6 +1,6 @@
 body {
     font-family: "Manrope", sans-serif;
-    font-size: 14px;
+/*    font-size: 14px; */
     width: 1200px;
     margin: auto;
     color: #ddd;
@@ -21,15 +21,72 @@ p {
 	line-height: 1.5;
 }
 
+#gamestab td:nth-child(2) {
+	text-align: right;
+}
+
+#overall th {
+	padding: 0px 10px;
+}
+
+#overall th:nth-child(1)	{
+	text-align: left;
+}
+
+#overall th:nth-child(2)	{
+	text-align: right;
+}
+
+#gamestab tr:hover	{
+	background-color: #000;
+	color: #ddd;
+}
+
+.menu {
+	padding: 10px;
+	background: #fff;
+	color: #222;
+	position: absolute;
+	font-weight: normal;
+	max-height: 400px;
+	overflow: auto;
+	margin-left: 1px;
+}
+
+.menu table	{
+	border-collapse: collapse;
+}
+
 .scrollable {
 	overflow: auto;
 	max-height: 200px;
 	display: block;
 	width: 100%;
 	margin-right: auto;
-	background-color: #dddddd;
+	background-color: #252;
 	margin: 0px;
 	padding: 0px;
+}
+
+.stdtab td {
+	text-align: right;
+	padding: 0px 12px;
+}
+
+.stdtab td:nth-child(3) {
+	width: 400px;
+}
+
+.stdtab td:nth-child(1) {
+	width: 250px;
+}
+
+table.scrollable th {
+	padding: 0px 12px;
+}
+
+.rect {
+	height: 14px;
 }
 
 .popup {
@@ -46,5 +103,9 @@ footer  {
 	padding-bottom: 5px;
 	text-align: end;
 	font-size: 90%;
+}
+
+footer a {
+	color: #48cccc;
 }
 

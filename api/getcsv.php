@@ -1,0 +1,135 @@
+<?php
+
+header('Content-type: text/csv');
+header("Cache-control: private");
+
+foreach ($_GET as $k => $v)     {
+
+	if(preg_match('/[^0-9a-z_-]/', $k) ||
+		preg_match('/[^0-9A-Za-z =\/\-\+],/', $v))
+
+		die("Oops: $k, $v");
+
+}
+
+$mc = new Memcached('xboxstat5');
+if (!count($mc->getServerList()))
+	$mc->addServer( '127.0.0.1', 11211 );
+
+$rep = $mc->get($_SERVER['QUERY_STRING']);
+
+if( $rep )      {
+	echo $rep;
+	return 0;
+}
+
+$db = pg_pconnect("port=6432 host=/tmp dbname=global user=readonly password=masha27uk")
+	or die("could not connect to DB");
+
+$rows = array();
+$timeout = 6;
+
+if( preg_match('/^(get|add|del)/', $_GET['f']) )
+    $_GET['f']();
+
+$rep = implode($rows);
+
+$mc->set($_SERVER['QUERY_STRING'], $rep, $timeout);
+header("Cache-control: max-age=$timeout");
+echo $rep;
+
+
+// usage: GET http://host/api/getcsv.php?f=func&par=parameters
+
+function getgames()	{
+
+	global $db, $rows;
+
+	$game = isset($_GET['game']) ? base64_decode($_GET['game']) : '';
+
+	$where = "where players > 0\n";
+
+	if(strlen($game) > 0)
+		$where .= "and lower(name) like lower('%". pg_escape_string($db, $game) . "%')\n";
+
+	$rows = pg_copy_to($db, "(
+
+		select
+			titleid,
+			name,
+			players
+		from games
+		$where
+		order by players desc nulls last
+		limit 200
+
+	)", chr(9));
+
+}
+
+function getname()	{
+
+	global $db, $rows;
+
+	$rows = pg_copy_to($db, "(select name,players from games where titleid=" . $_GET['titleid'] . ")", chr(9));
+
+}
+
+function gettab()	{		// tab = { devices, countries, langs }
+
+	global $db, $rows;
+
+	$tab = $_GET['tab'];
+	$titleid = $_GET['titleid'];
+
+	$where = "titleid=$titleid\n";
+
+	if($tab != 'devices')
+		if($_GET['devid'] >= 0)
+			$where .= "and devid=".$_GET['devid']."\n";
+		else
+			$where .= "and devid is null\n";
+
+	if($tab != 'countries')
+		if($_GET['countryid'] > 0)
+			$where .= "and countryid=".$_GET['countryid']."\n";
+		else
+			$where .= "and countryid is null\n";
+
+	if($tab != 'langs')
+		if($_GET['langid'] > 0)
+			$where .= "and langid=".$_GET['langid']."\n";
+		else
+			$where .= "and langid is null\n";
+
+	switch($tab)	{
+
+		case 'devices':
+			$fld = 'devname,devid';
+			$join = 'left join devices using(devid)';
+			break;
+		case 'countries':
+			$fld = 'name,countryid';
+			$join = 'left join countries using(countryid)';
+			break;
+		case 'langs':
+			$fld = 'name,langid';
+			$join = 'left join languages using(langid)';
+			break;
+	
+	}
+
+	error_log("fld=$fld join=$join where=$where");
+
+	$rows = pg_copy_to($db, "(
+
+		select 
+			$fld,gamers,secs,days 
+		from aggs.overall
+		$join
+		where
+			$where
+
+	)", chr(9));
+
+}
