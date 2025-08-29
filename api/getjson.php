@@ -28,7 +28,7 @@ function getgameinfo() {
 
 	$titleid = $_GET['titleid'];
 
-	$rep[] = pg_fetch_all(pg_query($db, "select name,players from games where titleid=$titleid"), PGSQL_ASSOC);
+	$rep[] = pg_fetch_all(pg_query($db, "select name from games where titleid=$titleid"), PGSQL_ASSOC);
 	$rep[] = pg_fetch_all(pg_query($db, "select min(utime) as utime from presence where titleid=$titleid"), PGSQL_NUM);
 
 }

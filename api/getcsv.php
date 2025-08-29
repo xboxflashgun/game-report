@@ -67,14 +67,6 @@ function getgames()	{
 
 }
 
-function getname()	{
-
-	global $db, $rows;
-
-	$rows = pg_copy_to($db, "(select name,players from games where titleid=" . $_GET['titleid'] . ")", chr(9));
-
-}
-
 function gettab()	{		// tab = { devices, countries, langs }
 
 	global $db, $rows;
