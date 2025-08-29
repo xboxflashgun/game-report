@@ -89,6 +89,14 @@ table.scrollable th {
 	height: 14px;
 }
 
+
+#timegamers {
+	width: 1000px;
+	height: 300px;
+	background-color: #252;
+}
+
+
 .popup {
 	position: absolute;
 	background-color: rgba(64, 32, 64, 0.8);

@@ -95,6 +95,7 @@ function drawtab(table)	{
 						drawtab(t);
 				});
 				paint();
+				timegraph();
 
 			});
 
@@ -107,11 +108,9 @@ function drawtab(table)	{
 		function paint()	{
 
 			var id = +d3.select(`#${table} input[type="radio"]:checked`).property("value");
-			console.log(table, id);
 
 			var sel = tab.find( d => d[1] === id );
 			var [ avgh, avgd ] = [ sel[3], sel[4] ];
-			console.log(avgh, avgd);
 
 			d3.selectAll(`#${table} td:nth-child(5)`).style('color', v => grad(v[3], avgh));
 			d3.selectAll(`#${table} td:nth-child(6)`).style('color', v => grad(v[4], avgd));

@@ -24,7 +24,7 @@ function report()	{
 	});
 
 	Object.keys(graphs).forEach(t => drawtab(t));
-
+	timegraph();
 
 }
 

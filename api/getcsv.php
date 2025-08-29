@@ -111,8 +111,6 @@ function gettab()	{		// tab = { devices, countries, langs }
 	
 	}
 
-	error_log("fld=$fld join=$join where=$where");
-
 	$rows = pg_copy_to($db, "(
 
 		select 
@@ -121,6 +119,56 @@ function gettab()	{		// tab = { devices, countries, langs }
 		$join
 		where
 			$where
+
+	)", chr(9));
+
+}
+
+function gettime()	{
+
+	global $db, $rows;
+
+	$titleid = $_GET['titleid'];
+
+	$where = "titleid=$titleid\n";
+
+	if($_GET['devid'] >= 0)
+		$where .= "and devid=".$_GET['devid']."\n";
+	else
+		$where .= "and devid is null\n";
+
+	if($_GET['countryid'] > 0)
+		$where .= "and countryid=".$_GET['countryid']."\n";
+	else
+		$where .= "and countryid is null\n";
+
+	if($_GET['langid'] > 0)
+		$where .= "and langid=".$_GET['langid']."\n";
+	else
+		$where .= "and langid is null\n";
+
+	$rows = pg_copy_to($db, "(
+		
+		select 
+			'week',
+			utime,
+			gamers,
+			secs,
+			days
+		from aggs.week
+		where 
+			$where
+		union
+		select 
+			'month',
+			utime,
+			gamers,
+			secs,
+			days
+		from aggs.month
+		where 
+			$where
+		order by utime
 
 	)", chr(9));
 
