@@ -32,7 +32,6 @@ function timegraph()	{
 		var height = div.node().clientHeight;
 		var [ mT, mR, mB, mL ] = [ 30, 0, 30, 40 ];		// marginTop, marginRight, ...
 
-		console.log(d3.extent(tab['week'].map(d => d.utime).concat(tab['month'].map(d => d.utime))));
 		var x = d3.scaleTime()
 			.domain(d3.extent(tab['week'].map(d => d.utime).concat(tab['month'].map(d => d.utime))))
 			.nice()
@@ -52,25 +51,63 @@ function timegraph()	{
 		bandwidth *= 0.8;		// padding
 
 		console.log(bandwidth);
-		svg.select(".graph")
+		svg.select(".graph-w")
 			.selectAll("rect")
 			.data(tab['week'])
 			.join( enter => {
 				enter.append("rect")
-					.attr("x", d => x(d.utime) + bandwidth - 1)
+					.attr("x", d => x(d.utime))
 					.attr("y", d => y(d.gamers))
 					.attr("height", d => y(0) - y(d.gamers))
 					.attr("fill", "#c07")
-					.attr("width", bandwidth);
+					.attr("width", bandwidth)
+					.attr("data-date", d => d.utime.toLocaleDateString())
+					.attr("data-tab", "week");
 			}, update => {
 				update
-					.attr("x", d => x(d.utime) + bandwidth - 1)
+					.attr("x", d => x(d.utime))
 					.attr("y", d => y(d.gamers))
 					.attr("height", d => y(0) - y(d.gamers))
 					.attr("fill", "#c07")
-					.attr("width", bandwidth);
+					.attr("width", bandwidth)
+					.attr("data-date", d => d.utime.toLocaleDateString())
+					.attr("data-tab", "week");
 			}, exit => exit.remove()
 			);
+
+		// month graph
+		bandwidth = x(new Date(30.6*24*3600*1000)) - x(new Date(0));
+		bandwidth *= 0.8;
+
+		svg.select(".graph-m")
+			.selectAll("rect")
+			.data(tab['month'])
+			.join( enter => {
+				enter.append("rect")
+					.attr("x", d => x(d.utime))
+					.attr("y", d => y(d.gamers))
+					.attr("height", d => y(0) - y(d.gamers))
+					.attr("fill", "#309")
+					.attr("width", bandwidth)
+					.attr("data-date", d => d.utime.toLocaleDateString())
+					.attr("data-tab", "month");
+			}, update => {
+				update
+					.attr("x", d => x(d.utime))
+					.attr("y", d => y(d.gamers))
+					.attr("height", d => y(0) - y(d.gamers))
+					.attr("fill", "#309")
+					.attr("width", bandwidth)
+					.attr("data-date", d => d.utime.toLocaleDateString())
+					.attr("data-tab", "month");
+			}, exit => exit.remove()
+			);
+
+		svg.selectAll("rect").on("mouseover", (e) => {
+
+			console.log(e.target);
+
+		});
 
 	});
 
