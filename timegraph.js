@@ -130,6 +130,8 @@ function timegraph()	{
 			d3.select("#period-str").text(row.header);
 			d3.select("#number").text(row.gamers);
 
+			svg.select("rect.bright").attr("filter", "brightness(1)").classed("bright", false);
+			rect.attr("filter", "brightness(1.2)").classed("bright", true);
 
 		});
 
