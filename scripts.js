@@ -26,5 +26,7 @@ function report()	{
 	Object.keys(graphs).forEach(t => drawtab(t));
 	timegraph();
 
+	d3.select("#game").on('focusin', games);
+
 }
 

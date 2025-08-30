@@ -49,8 +49,9 @@ function games()	{
 
 		d3.select("#gamestab").selectAll("tr").on('click', (e) => {
 
-			titleid = e.target.parentNode.dataset.id;
-			report();
+			titleid = +e.target.parentNode.dataset.id;
+			if(titleid > 0)
+				report();
 
 		});
 

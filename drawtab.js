@@ -13,6 +13,7 @@ function drawtab(table)	{
 	var url = `api/getcsv.php?f=gettab&tab=${table}&titleid=${titleid}`;
 	Object.keys(graphs).forEach( t => url += `&${graphs[t].fld}=${graphs[t].id}` );
 
+	console.log(url);
 	fetch(url)
 	.then( res => res.text() )
 	.then( res => {
