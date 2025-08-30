@@ -132,8 +132,11 @@ function timegraph()	{
 
 			svg.select("rect.bright").attr("filter", "brightness(1)").classed("bright", false);
 			rect.attr("filter", "brightness(1.2)").classed("bright", true);
+		
+			div.on('mouseout', () => popup.style("display",  "none"));
 
 		});
+
 
 	});
 
