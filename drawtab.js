@@ -13,7 +13,6 @@ function drawtab(table)	{
 	var url = `api/getcsv.php?f=gettab&tab=${table}&titleid=${titleid}`;
 	Object.keys(graphs).forEach( t => url += `&${graphs[t].fld}=${graphs[t].id}` );
 
-	console.log(url);
 	fetch(url)
 	.then( res => res.text() )
 	.then( res => {
@@ -41,6 +40,12 @@ function drawtab(table)	{
 			row[4] = +row[4];
 			row[6] = +row[6];
 
+			row[7] = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2, notation: 'compact' }).format(row[2]);
+			row[8] = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2, notation: 'compact' }).format(row[3]/3600);
+			row[9] = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2, notation: 'compact' }).format(row[4]);
+
+			row[10] = row[2]/row[6];
+
 			if(row[5] === '\\N')
 				maxgamers = +row[2];
 			else
@@ -48,7 +53,9 @@ function drawtab(table)	{
 
 		});
 
-		console.log(tab);
+		// popularity percentage
+		var fixed = ( -Math.log10(d3.min(tab.map(d => d[10]))) | 0);
+		tab.forEach(d => d[11] = (100*d[10]).toFixed(fixed) + '%');
 
 		function filltab()	{
 
@@ -68,13 +75,13 @@ function drawtab(table)	{
 					.append('input').attr('type','radio').attr('name', table)
 					.property('value', d => d[1]).property('checked', (d => d[1] === graphs[table].id));
 				tr.append('td').attr('title', d => d[2])
-					.text(d => new Intl.NumberFormat('en-US', { maximumFractionDigits: 2, notation: 'compact' }).format(d[2]));
+					.text(d => d[7]);
 				tr.append('td').append('div').style('width', d => 100.*d[2]/maxn + '%')
 					.style('background', d=>graphs[table].color).classed('rect', true);
 				tr.append('td').text( d => (100.*d[2]/maxn).toFixed(2) + '%');
-				tr.append('td').text( d => new Intl.NumberFormat('en-US', { maximumFractionDigits: 2, notation: 'compact' }).format(d[3]/3600));
-				tr.append('td').text( d => new Intl.NumberFormat('en-US', { maximumFractionDigits: 2, notation: 'compact' }).format(d[4]));
-				tr.append('td').text( d => (100.*d[2]/d[6]).toFixed() + '%');
+				tr.append('td').text( d => d[8] );
+				tr.append('td').text( d => d[9] );
+				tr.append('td').text( d => d[11]);
 
 			}, update => {
 
@@ -82,12 +89,12 @@ function drawtab(table)	{
 					.append('input').attr('type','radio').attr('name', table).property('value', d => d[1])
 					.property('checked', (d => d[1] === graphs[table].id));
 				update.select('td:nth-child(2)').attr('title', d => d[2])
-					.text(d => new Intl.NumberFormat('en-US', { maximumFractionDigits: 2, notation: 'compact' }).format(d[2]));
+					.text(d => d[7]);
 				update.select('td:nth-child(3) div').style('width', d => 100.*d[2]/maxn + '%');
 				update.select('td:nth-child(4)').text( d => (100.*d[2]/maxn).toFixed(2) + '%');
-				update.select('td:nth-child(5)').text( 
-					d => new Intl.NumberFormat('en-US', { maximumFractionDigits: 2, notation: 'compact' }).format(d[3]/3600));
-				update.select('td:nth-child(6)').text( d => new Intl.NumberFormat('en-US', { maximumFractionDigits: 2, notation: 'compact' }).format(d[4]));
+				update.select('td:nth-child(5)').text( d => d[8] );
+				update.select('td:nth-child(6)').text( d => d[9] ); 
+				update.select('td:nth-child(7)').text( d => d[11] );
 	
 			}, exit => {
 	
