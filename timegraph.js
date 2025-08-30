@@ -16,16 +16,17 @@ function timegraph()	{
 
 			var row = s.split('\t');
 			tab[row[0]] ??= [];
+			var utime = new Date(+row[1] * 1000);
 			tab[row[0]].push( { 
-				utime: new Date(+row[1] * 1000),
+				utime: utime,
 				gamers: +row[2],
 				avghours: +row[3]/3600/(+row[2]),
-				avgdays: +row[4]/(+row[2])
+				avgdays: +row[4]/(+row[2]),
+				header: (row[0] === 'month') ? new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(utime)
+					: utime.toLocaleDateString(),
 			});
 
 		});
-
-		console.log(tab);
 
 		var div = d3.select("#timegamers");
 		var width = div.node().clientWidth;
@@ -48,9 +49,8 @@ function timegraph()	{
 			.call(d3.axisLeft(y).tickFormat(d3.format(".3~s")));
 
 		var bandwidth = x(new Date(7*24*3600*1000)) - x(new Date(0));		//	(width-mR-mL) / tab['week'].length - 1;
-		bandwidth *= 0.8;		// padding
+		bandwidth -= 1;		// padding
 
-		console.log(bandwidth);
 		svg.select(".graph-w")
 			.selectAll("rect")
 			.data(tab['week'])
@@ -115,15 +115,18 @@ function timegraph()	{
 		svg.selectAll("rect").on("mouseover", (e) => {
 
 			var rect = d3.select(e.target);
-			var [x, y] = [ +rect.attr("x"), +rect.attr("y") ];
+			var [x, y, w] = [ +rect.attr("x"), +rect.attr("y"), +rect.attr("width") ];
 			var [bx, by] = [ svg.node().getBoundingClientRect().x + window.scrollX, svg.node().getBoundingClientRect().y + window.scrollY];
 			var popup=d3.select("#popup-rect");
-			var row = tab[rect.attr("data-tab")][rect.attr("data-id")];
+			var per = rect.attr("data-tab");
+			var row = tab[per][rect.attr("data-id")];
 
-			popup.style("top", y + by + "px")
-				.style("left", x + bx + "px");
+			popup.style("top", y + by - 70 + "px")
+				.style("left", x + bx + w/2 + "px");
 
-			console.log(row);
+			d3.select("#period-name").text(per.charAt(0).toUpperCase() + per.slice(1));
+			d3.select("#period-str").text(row.header);
+			d3.select("#number").text(row.gamers);
 
 		});
 
