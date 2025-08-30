@@ -105,7 +105,7 @@ function timegraph()	{
 					.attr("y", d => y(d.gamers))
 					.attr("height", d => y(0) - y(d.gamers))
 					.attr("fill", "#309")
-					.attr("width", bandwidth)
+					.attr("width", d => band(d.utime))
 					.attr("data-date", d => d.utime.toLocaleDateString())
 					.attr("data-id", (d,i) => i)
 					.attr("data-tab", "month");
@@ -117,7 +117,9 @@ function timegraph()	{
 			var rect = d3.select(e.target);
 			var [x, y, w] = [ +rect.attr("x"), +rect.attr("y"), +rect.attr("width") ];
 			var [bx, by] = [ svg.node().getBoundingClientRect().x + window.scrollX, svg.node().getBoundingClientRect().y + window.scrollY];
-			var popup=d3.select("#popup-rect");
+			var popup=d3.select("#popup-rect")
+				.style("display", null);
+
 			var per = rect.attr("data-tab");
 			var row = tab[per][rect.attr("data-id")];
 
@@ -127,6 +129,7 @@ function timegraph()	{
 			d3.select("#period-name").text(per.charAt(0).toUpperCase() + per.slice(1));
 			d3.select("#period-str").text(row.header);
 			d3.select("#number").text(row.gamers);
+
 
 		});
 

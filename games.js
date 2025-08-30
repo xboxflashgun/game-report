@@ -1,6 +1,7 @@
 function games()	{
 
 	d3.select("#gameslist").style("display", null);
+	d3.selectAll(".popup").style("display", "none");
 	d3.select("#game").on('input', games);
 
 	var url = "api/getcsv.php?f=getgames";
@@ -49,8 +50,9 @@ function games()	{
 		d3.select("#gamestab").selectAll("tr").on('click', (e) => {
 
 			titleid = +e.target.parentNode.dataset.id;
-			if(titleid > 0)
-				report();
+			var name = tab.find(d => d[0] === titleid)[1];
+			d3.select("#name").text(name);
+			report();
 
 		});
 
