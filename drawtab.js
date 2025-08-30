@@ -33,14 +33,22 @@ function drawtab(table)	{
 
 				row[0] = 'All';
 				row[1] =  -1;
+				row[6] = maxn;
 				maxn = row[2];
 
 			}
 			row[3] = +row[3];
 			row[4] = +row[4];
-			tab.push(row);
+			row[6] = +row[6];
+
+			if(row[5] === '\\N')
+				maxgamers = +row[2];
+			else
+				tab.push(row);
 
 		});
+
+		console.log(tab);
 
 		function filltab()	{
 
@@ -66,6 +74,7 @@ function drawtab(table)	{
 				tr.append('td').text( d => (100.*d[2]/maxn).toFixed(2) + '%');
 				tr.append('td').text( d => new Intl.NumberFormat('en-US', { maximumFractionDigits: 2, notation: 'compact' }).format(d[3]/3600));
 				tr.append('td').text( d => new Intl.NumberFormat('en-US', { maximumFractionDigits: 2, notation: 'compact' }).format(d[4]));
+				tr.append('td').text( d => (100.*d[2]/d[6]).toFixed() + '%');
 
 			}, update => {
 

@@ -74,7 +74,7 @@ function gettab()	{		// tab = { devices, countries, langs }
 	$tab = $_GET['tab'];
 	$titleid = $_GET['titleid'];
 
-	$where = "titleid=$titleid\n";
+	$where = "";
 
 	if($tab != 'devices')
 		if($_GET['devid'] >= 0)
@@ -97,30 +97,60 @@ function gettab()	{		// tab = { devices, countries, langs }
 	switch($tab)	{
 
 		case 'devices':
-			$fld = 'devname,devid';
+			$fld1 = 'devname';
+			$fld2 = 'devid';
 			$join = 'left join devices using(devid)';
+			$union = "and devid is null\n";
 			break;
 		case 'countries':
-			$fld = 'name,countryid';
+			$fld1 = 'name';
+			$fld2 = 'countryid';
 			$join = 'left join countries using(countryid)';
+			$union = "and countryid is null\n";
 			break;
 		case 'langs':
-			$fld = 'name,langid';
+			$fld1 = 'name';
+			$fld2 = 'langid';
 			$join = 'left join languages using(langid)';
+			$union = "and langid is null\n";
 			break;
 	
 	}
 
-	$rows = pg_copy_to($db, "(
+	$req = "
 
-		select 
-			$fld,gamers,secs,days 
-		from aggs.overall
-		$join
-		where
-			$where
+select
+	$fld1,$fld2,gamers,secs,days,titleid,totgamers
+from aggs.overall
+$join
+left join (
+	select
+		'',$fld2,
+		gamers as totgamers
+	from aggs.overall
+	where
+		titleid is null
+		$where
+	) using($fld2)
+where
+	titleid=$titleid
+	$where
+union
+select
+	$fld1,$fld2,gamers,secs,days,titleid,null as totgamers
+from aggs.overall
+$join
+where
+	titleid is null
+	$where
+order by titleid nulls first
 
-	)", chr(9));
+
+	";
+
+	error_log($req);
+
+	$rows = pg_copy_to($db, "( $req )", chr(9));
 
 }
 
