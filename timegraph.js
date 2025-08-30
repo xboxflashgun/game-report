@@ -62,6 +62,7 @@ function timegraph()	{
 					.attr("fill", "#c07")
 					.attr("width", bandwidth)
 					.attr("data-date", d => d.utime.toLocaleDateString())
+					.attr("data-id", (d,i) => i)
 					.attr("data-tab", "week");
 			}, update => {
 				update
@@ -71,6 +72,7 @@ function timegraph()	{
 					.attr("fill", "#c07")
 					.attr("width", bandwidth)
 					.attr("data-date", d => d.utime.toLocaleDateString())
+					.attr("data-id", (d,i) => i)
 					.attr("data-tab", "week");
 			}, exit => exit.remove()
 			);
@@ -90,6 +92,7 @@ function timegraph()	{
 					.attr("fill", "#309")
 					.attr("width", bandwidth)
 					.attr("data-date", d => d.utime.toLocaleDateString())
+					.attr("data-id", (d,i) => i)
 					.attr("data-tab", "month");
 			}, update => {
 				update
@@ -99,13 +102,23 @@ function timegraph()	{
 					.attr("fill", "#309")
 					.attr("width", bandwidth)
 					.attr("data-date", d => d.utime.toLocaleDateString())
+					.attr("data-id", (d,i) => i)
 					.attr("data-tab", "month");
 			}, exit => exit.remove()
 			);
 
 		svg.selectAll("rect").on("mouseover", (e) => {
 
-			console.log(e.target);
+			var rect = d3.select(e.target);
+			var [x, y] = [ +rect.attr("x"), +rect.attr("y") ];
+			var [bx, by] = [ svg.node().getBoundingClientRect().x + window.scrollX, svg.node().getBoundingClientRect().y + window.scrollY];
+			var popup=d3.select("#popup-rect");
+			var row = tab[rect.attr("data-tab")][rect.attr("data-id")];
+
+			popup.style("top", y + by + "px")
+				.style("left", x + bx + "px");
+
+			console.log(row);
 
 		});
 

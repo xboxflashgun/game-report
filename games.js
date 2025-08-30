@@ -13,7 +13,6 @@ function games()	{
 	.then(res => {
 
 		var tab = [];
-		tab.push( [0, '- reset -', 0] );
 
 		res.split('\n').forEach( s => {
 
