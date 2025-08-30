@@ -20,15 +20,13 @@ function timegraph()	{
 			tab[row[0]].push( { 
 				utime: utime,
 				gamers: +row[2],
-				avghours: +row[3]/3600/(+row[2]),
-				avgdays: +row[4]/(+row[2]),
+				avghours: (+row[3]/3600/(+row[2])).toFixed(2),
+				avgdays: (+row[4]/(+row[2])).toFixed(2),
 				header: (row[0] === 'month') ? new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(utime)
 					: utime.toLocaleDateString(),
 			});
 
 		});
-
-		console.log(tab);
 
 		draw_timegraph("#timegamers", "gamers");
 		draw_timegraph("#timespent", "avghours");
