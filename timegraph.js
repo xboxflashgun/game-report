@@ -28,115 +28,127 @@ function timegraph()	{
 
 		});
 
-		var div = d3.select("#timegamers");
-		var width = div.node().clientWidth;
-		var height = div.node().clientHeight;
-		var [ mT, mR, mB, mL ] = [ 30, 0, 30, 40 ];		// marginTop, marginRight, ...
+		console.log(tab);
 
-		var x = d3.scaleTime()
-			.domain(d3.extent(tab['week'].map(d => d.utime).concat(tab['month'].map(d => d.utime))))
-			.nice()
-			.range([ mL, width-mR ]);
-		var y = d3.scaleLinear( [0, d3.max(tab['month'].map(d => d.gamers)) ], [ height-mB, mT ] );
+		draw_timegraph("#timegamers", "gamers");
+		draw_timegraph("#timespent", "avghours");
+		draw_timegraph("#timedays", "avgdays");
 
-		var svg = d3.select("#timegamers svg");
-		svg.select(".x-axis")
-			.attr("transform", `translate(0, ${height-mB})`)
-			.call(d3.axisBottom(x));	// .tickSizeOuter(0));
+		function draw_timegraph(divname, col)	{
 
-		svg.select(".y-axis")
-			.attr("transform", `translate(${mL}, 0)`)
-			.call(d3.axisLeft(y).tickFormat(d3.format(".3~s")));
+			var div = d3.select(divname);
+			var width = div.node().clientWidth;
+			var height = div.node().clientHeight;
+			var [ mT, mR, mB, mL ] = [ 30, 0, 30, 40 ];		// marginTop, marginRight, ...
 
-		var bandwidth = x(new Date(7*24*3600*1000)) - x(new Date(0));		//	(width-mR-mL) / tab['week'].length - 1;
-		bandwidth -= 1;		// padding
+			var x = d3.scaleTime()
+				.domain(d3.extent(tab['week'].map(d => d.utime).concat(tab['month'].map(d => d.utime))))
+				.nice()
+				.range([ mL, width-mR ]);
+			var y = d3.scaleLinear( [0, d3.max(tab['month'].map(d => d[col])) ], [ height-mB, mT ] );
 
-		svg.select(".graph-w")
-			.selectAll("rect")
-			.data(tab['week'])
-			.join( enter => {
-				enter.append("rect")
-					.attr("x", d => x(d.utime))
-					.attr("y", d => y(d.gamers))
-					.attr("height", d => y(0) - y(d.gamers))
-					.attr("fill", "#c07")
-					.attr("width", bandwidth)
-					.attr("data-date", d => d.utime.toLocaleDateString())
-					.attr("data-id", (d,i) => i)
-					.attr("data-tab", "week");
-			}, update => {
-				update
-					.attr("x", d => x(d.utime))
-					.attr("y", d => y(d.gamers))
-					.attr("height", d => y(0) - y(d.gamers))
-					.attr("fill", "#c07")
-					.attr("width", bandwidth)
-					.attr("data-date", d => d.utime.toLocaleDateString())
-					.attr("data-id", (d,i) => i)
-					.attr("data-tab", "week");
-			}, exit => exit.remove()
-			);
+			var svg = div.select("svg");
+			svg.select(".x-axis")
+				.attr("transform", `translate(0, ${height-mB})`)
+				.call(d3.axisBottom(x));	// .tickSizeOuter(0));
 
-		// month graph
+			svg.select(".y-axis")
+				.attr("transform", `translate(${mL}, 0)`)
+				.call(d3.axisLeft(y).tickFormat(d3.format(".3~s")));
 
-		function band(utime)	{		// bandwidth for months
+			var bandwidth = x(new Date(7*24*3600*1000)) - x(new Date(0));		//	(width-mR-mL) / tab['week'].length - 1;
+			bandwidth -= 1;		// padding
 
-			var nd = new Date(new Date(utime).setMonth((utime.getMonth() + 1)));
-			return x(nd) - x(utime) - 1;
+			svg.select(".graph-w")
+				.selectAll("rect")
+				.data(tab['week'])
+				.join( enter => {
+					enter.append("rect")
+						.attr("x", d => x(d.utime))
+						.attr("y", d => y(d[col]))
+						.attr("height", d => y(0) - y(d[col]))
+						.attr("fill", "#c07")
+						.attr("width", bandwidth)
+						.attr("data-date", d => d.utime.toLocaleDateString())
+						.attr("data-id", (d,i) => i)
+						.attr("data-tab", "week");
+				}, update => {
+					update
+						.attr("x", d => x(d.utime))
+						.attr("y", d => y(d[col]))
+						.attr("height", d => y(0) - y(d[col]))
+						.attr("fill", "#c07")
+						.attr("width", bandwidth)
+						.attr("data-date", d => d.utime.toLocaleDateString())
+						.attr("data-id", (d,i) => i)
+						.attr("data-tab", "week");
+				}, exit => exit.remove()
+				);
+
+			// month graph
+
+			function band(utime)	{		// bandwidth for months
+
+				var nd = new Date(new Date(utime).setMonth((utime.getMonth() + 1)));
+				return x(nd) - x(utime) - 1;
+
+			}
+
+			svg.select(".graph-m")
+				.selectAll("rect")
+				.data(tab['month'])
+				.join( enter => {
+					enter.append("rect")
+						.attr("x", d => x(d.utime))
+						.attr("y", d => y(d[col]))
+						.attr("height", d => y(0) - y(d[col]))
+						.attr("fill", "#309")
+						.attr("width", d => band(d.utime))
+						.attr("data-date", d => d.utime.toLocaleDateString())
+						.attr("data-id", (d,i) => i)
+						.attr("data-tab", "month");
+				}, update => {
+					update
+						.attr("x", d => x(d.utime))
+						.attr("y", d => y(d[col]))
+						.attr("height", d => y(0) - y(d[col]))
+						.attr("fill", "#309")
+						.attr("width", d => band(d.utime))
+						.attr("data-date", d => d.utime.toLocaleDateString())
+						.attr("data-id", (d,i) => i)
+						.attr("data-tab", "month");
+				}, exit => exit.remove()
+				);
+
+			svg.selectAll("rect").on("mouseover", (e) => {
+
+				var rect = d3.select(e.target);
+				var [x, y, w] = [ +rect.attr("x"), +rect.attr("y"), +rect.attr("width") ];
+				var [bx, by] = [ svg.node().getBoundingClientRect().x + window.scrollX, svg.node().getBoundingClientRect().y + window.scrollY];
+				var popup=d3.select("#popup-rect")
+					.style("display", null);
+
+				var per = rect.attr("data-tab");
+				var row = tab[per][rect.attr("data-id")];
+
+				popup.style("top", y + by - 70 + "px")
+					.style("left", x + bx + w/2 + "px");
+
+				d3.select("#period-name").text(per.charAt(0).toUpperCase() + per.slice(1));
+				d3.select("#period-str").text(row.header);
+				d3.select("#number").text(row[col]);
+
+				svg.select("rect.bright").attr("filter", "brightness(1)").classed("bright", false);
+				rect.attr("filter", "brightness(1.2)").classed("bright", true);
+		
+				div.on('mouseout', () => { 
+					popup.style("display",  "none");
+					svg.select("rect.bright").attr("filter", "brightness(1)").classed("bright", false);
+				});
+
+			});
 
 		}
-
-		svg.select(".graph-m")
-			.selectAll("rect")
-			.data(tab['month'])
-			.join( enter => {
-				enter.append("rect")
-					.attr("x", d => x(d.utime))
-					.attr("y", d => y(d.gamers))
-					.attr("height", d => y(0) - y(d.gamers))
-					.attr("fill", "#309")
-					.attr("width", d => band(d.utime))
-					.attr("data-date", d => d.utime.toLocaleDateString())
-					.attr("data-id", (d,i) => i)
-					.attr("data-tab", "month");
-			}, update => {
-				update
-					.attr("x", d => x(d.utime))
-					.attr("y", d => y(d.gamers))
-					.attr("height", d => y(0) - y(d.gamers))
-					.attr("fill", "#309")
-					.attr("width", d => band(d.utime))
-					.attr("data-date", d => d.utime.toLocaleDateString())
-					.attr("data-id", (d,i) => i)
-					.attr("data-tab", "month");
-			}, exit => exit.remove()
-			);
-
-		svg.selectAll("rect").on("mouseover", (e) => {
-
-			var rect = d3.select(e.target);
-			var [x, y, w] = [ +rect.attr("x"), +rect.attr("y"), +rect.attr("width") ];
-			var [bx, by] = [ svg.node().getBoundingClientRect().x + window.scrollX, svg.node().getBoundingClientRect().y + window.scrollY];
-			var popup=d3.select("#popup-rect")
-				.style("display", null);
-
-			var per = rect.attr("data-tab");
-			var row = tab[per][rect.attr("data-id")];
-
-			popup.style("top", y + by - 70 + "px")
-				.style("left", x + bx + w/2 + "px");
-
-			d3.select("#period-name").text(per.charAt(0).toUpperCase() + per.slice(1));
-			d3.select("#period-str").text(row.header);
-			d3.select("#number").text(row.gamers);
-
-			svg.select("rect.bright").attr("filter", "brightness(1)").classed("bright", false);
-			rect.attr("filter", "brightness(1.2)").classed("bright", true);
-		
-			div.on('mouseout', () => popup.style("display",  "none"));
-
-		});
-
 
 	});
 
