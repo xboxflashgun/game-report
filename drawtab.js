@@ -127,10 +127,11 @@ function drawtab(table)	{
 			var id = +d3.select(`#${table} input[type="radio"]:checked`).property("value");
 
 			var sel = tab.find( d => d[1] === id );
-			var [ avgh, avgd ] = [ sel[3], sel[4] ];
+			var [ avgh, avgd, pop ] = [ sel[3], sel[4], sel[10] ];
 
 			d3.selectAll(`#${table} td:nth-child(5)`).style('color', v => grad(v[3], avgh));
 			d3.selectAll(`#${table} td:nth-child(6)`).style('color', v => grad(v[4], avgd));
+			d3.selectAll(`#${table} td:nth-child(7)`).style('color', v => grad(v[10], pop));
 
 		}
 
