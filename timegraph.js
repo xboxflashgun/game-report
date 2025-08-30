@@ -78,8 +78,13 @@ function timegraph()	{
 			);
 
 		// month graph
-		bandwidth = x(new Date(30.6*24*3600*1000)) - x(new Date(0));
-		bandwidth *= 0.8;
+
+		function band(utime)	{		// bandwidth for months
+
+			var nd = new Date(new Date(utime).setMonth((utime.getMonth() + 1)));
+			return x(nd) - x(utime) - 1;
+
+		}
 
 		svg.select(".graph-m")
 			.selectAll("rect")
@@ -90,7 +95,7 @@ function timegraph()	{
 					.attr("y", d => y(d.gamers))
 					.attr("height", d => y(0) - y(d.gamers))
 					.attr("fill", "#309")
-					.attr("width", bandwidth)
+					.attr("width", d => band(d.utime))
 					.attr("data-date", d => d.utime.toLocaleDateString())
 					.attr("data-id", (d,i) => i)
 					.attr("data-tab", "month");
