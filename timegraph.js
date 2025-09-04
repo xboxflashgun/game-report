@@ -28,11 +28,11 @@ function timegraph()	{
 
 		});
 
-		draw_timegraph("#timegamers", "gamers");
-		draw_timegraph("#timespent", "avghours");
-		draw_timegraph("#timedays", "avgdays");
+		draw_timegraph("#timegamers", "gamers", "Gamers");
+		draw_timegraph("#timespent", "avghours", "Avg. hours");
+		draw_timegraph("#timedays", "avgdays", "Avg. days");
 
-		function draw_timegraph(divname, col)	{
+		function draw_timegraph(divname, col, name)	{
 
 			var div = d3.select(divname);
 			var width = div.node().clientWidth;
@@ -134,6 +134,7 @@ function timegraph()	{
 
 				d3.select("#period-name").text(per.charAt(0).toUpperCase() + per.slice(1));
 				d3.select("#period-str").text(row.header);
+				d3.select("#period-num").text(name);
 				var num = ( col === 'gamers' ) ? row[col] : row[col].toFixed(2);
 				d3.select("#number").text(num);
 
