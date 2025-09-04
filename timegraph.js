@@ -20,8 +20,8 @@ function timegraph()	{
 			tab[row[0]].push( { 
 				utime: utime,
 				gamers: +row[2],
-				avghours: (+row[3]/3600/(+row[2])).toFixed(2),
-				avgdays: (+row[4]/(+row[2])).toFixed(2),
+				avghours: (+row[3]/3600/(+row[2])),
+				avgdays: (+row[4]/(+row[2])),
 				header: (row[0] === 'month') ? new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(utime)
 					: utime.toLocaleDateString(),
 			});
@@ -134,7 +134,8 @@ function timegraph()	{
 
 				d3.select("#period-name").text(per.charAt(0).toUpperCase() + per.slice(1));
 				d3.select("#period-str").text(row.header);
-				d3.select("#number").text(row[col]);
+				var num = ( col === 'gamers' ) ? row[col] : row[col].toFixed(2);
+				d3.select("#number").text(num);
 
 				svg.select("rect.bright").attr("filter", "brightness(1)").classed("bright", false);
 				rect.attr("filter", "brightness(1.2)").classed("bright", true);
